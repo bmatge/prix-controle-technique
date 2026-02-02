@@ -1,17 +1,10 @@
 services:
-  app:
-    build:
-      context: .
-      dockerfile: Dockerfile
+  controle-technique:
+    build: .
+    container_name: controle-technique
     restart: unless-stopped
-    healthcheck:
-      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost/"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 10s
 
-    # Réseau Traefik
+    # Réseau Traefik (même réseau que ecosystem)
     networks:
       - ecosystem-network
 
@@ -19,15 +12,27 @@ services:
     labels:
       - "traefik.enable=true"
 
-      # Router HTTPS uniquement (redirection HTTP gérée globalement par Traefik)
-      - "traefik.http.routers.controle-technique.rule=Host(`controle-technique.matge.com`)"
-      - "traefik.http.routers.controle-technique.entrypoints=websecure"
-      - "traefik.http.routers.controle-technique.tls.certresolver=letsencrypt"
+      # Router HTTP (redirige vers HTTPS)
+      - "traefik.http.routers.controle-technique-http.rule=Host(`controle-technique.matge.com`)"
+      - "traefik.http.routers.controle-technique-http.entrypoints=web"
+      - "traefik.http.routers.controle-technique-http.middlewares=redirect-to-https"
+
+      # Router HTTPS
+      - "traefik.http.routers.controle-technique-https.rule=Host(`controle-technique.matge.com`)"
+      - "traefik.http.routers.controle-technique-https.entrypoints=websecure"
+      - "traefik.http.routers.controle-technique-https.tls=true"
+      - "traefik.http.routers.controle-technique-https.tls.certresolver=letsencrypt"
+      - "traefik.http.routers.controle-technique-https.tls.options=anssi-strict@file"
+      - "traefik.http.routers.controle-technique-https.middlewares=security-headers@file"
 
       # Service
       - "traefik.http.services.controle-technique.loadbalancer.server.port=80"
 
-# Réseau externe Traefik
+      # Middleware de redirection HTTPS
+      - "traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https"
+      - "traefik.http.middlewares.redirect-to-https.redirectscheme.permanent=true"
+
+# Réseau externe Traefik (même que le projet ecosystem)
 networks:
   ecosystem-network:
     external: true
