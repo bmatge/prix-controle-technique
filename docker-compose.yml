@@ -22,7 +22,11 @@ services:
       # Router HTTP (redirige vers HTTPS)
       - "traefik.http.routers.controle-technique-http.rule=Host(`controle-technique.matge.com`)"
       - "traefik.http.routers.controle-technique-http.entrypoints=web"
-      - "traefik.http.routers.controle-technique-http.middlewares=redirect-to-https@file"
+      - "traefik.http.routers.controle-technique-http.middlewares=controle-technique-https-redirect"
+
+      # Middleware de redirection HTTPS (défini inline)
+      - "traefik.http.middlewares.controle-technique-https-redirect.redirectscheme.scheme=https"
+      - "traefik.http.middlewares.controle-technique-https-redirect.redirectscheme.permanent=true"
 
       # Router HTTPS
       - "traefik.http.routers.controle-technique-https.rule=Host(`controle-technique.matge.com`)"
