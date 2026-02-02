@@ -11,7 +11,7 @@ services:
       retries: 3
       start_period: 10s
 
-    # Réseau Traefik (même réseau que ecosystem)
+    # Réseau Traefik
     networks:
       - ecosystem-network
 
@@ -22,24 +22,18 @@ services:
       # Router HTTP (redirige vers HTTPS)
       - "traefik.http.routers.controle-technique-http.rule=Host(`controle-technique.matge.com`)"
       - "traefik.http.routers.controle-technique-http.entrypoints=web"
-      - "traefik.http.routers.controle-technique-http.middlewares=redirect-to-https"
+      - "traefik.http.routers.controle-technique-http.middlewares=redirect-to-https@file"
 
       # Router HTTPS
       - "traefik.http.routers.controle-technique-https.rule=Host(`controle-technique.matge.com`)"
       - "traefik.http.routers.controle-technique-https.entrypoints=websecure"
       - "traefik.http.routers.controle-technique-https.tls=true"
       - "traefik.http.routers.controle-technique-https.tls.certresolver=letsencrypt"
-      - "traefik.http.routers.controle-technique-https.tls.options=anssi-strict@file"
-      - "traefik.http.routers.controle-technique-https.middlewares=security-headers@file"
 
       # Service
       - "traefik.http.services.controle-technique.loadbalancer.server.port=80"
 
-      # Middleware de redirection HTTPS
-      - "traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https"
-      - "traefik.http.middlewares.redirect-to-https.redirectscheme.permanent=true"
-
-# Réseau externe Traefik (même que le projet ecosystem)
+# Réseau externe Traefik
 networks:
   ecosystem-network:
     external: true
