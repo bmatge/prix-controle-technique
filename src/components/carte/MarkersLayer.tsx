@@ -72,12 +72,68 @@ export function MarkersLayer({ centres, onCentreSelect }: MarkersLayerProps) {
     };
   }, [centres, getFilteredPrice]);
 
+  // Map des prix par position (lat,lng) pour les clusters
+  const positionPrices = useMemo(() => {
+    const map = new Map<string, number>();
+    centres.forEach((c) => {
+      if (c.lat && c.lng) {
+        const key = `${c.lat.toFixed(6)},${c.lng.toFixed(6)}`;
+        map.set(key, getFilteredPrice(c));
+      }
+    });
+    return map;
+  }, [centres, getFilteredPrice]);
+
+  // Fonction pour créer l'icône du cluster
+  const createClusterIcon = useCallback(
+    (cluster: L.MarkerCluster) => {
+      const markers = cluster.getAllChildMarkers();
+      const count = markers.length;
+
+      // Calculer le prix moyen du cluster
+      let totalPrice = 0;
+      let priceCount = 0;
+      markers.forEach((marker: L.Marker) => {
+        const latlng = marker.getLatLng();
+        const key = `${latlng.lat.toFixed(6)},${latlng.lng.toFixed(6)}`;
+        if (positionPrices.has(key)) {
+          totalPrice += positionPrices.get(key)!;
+          priceCount++;
+        }
+      });
+
+      const avgPrice = priceCount > 0 ? totalPrice / priceCount : 0;
+      const color = getPriceColor(avgPrice, priceRange.min, priceRange.max);
+
+      return L.divIcon({
+        html: `<div style="
+          background-color: ${color};
+          width: 40px;
+          height: 40px;
+          border-radius: 50%;
+          border: 3px solid white;
+          box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          color: white;
+          font-weight: bold;
+          font-size: 14px;
+        ">${count}</div>`,
+        className: 'custom-cluster-icon',
+        iconSize: [40, 40],
+      });
+    },
+    [positionPrices, priceRange]
+  );
+
   return (
     <MarkerClusterGroup
       chunkedLoading
       maxClusterRadius={60}
       spiderfyOnMaxZoom
       showCoverageOnHover={false}
+      iconCreateFunction={createClusterIcon}
     >
       {centres
         .filter((c) => c.lat && c.lng)
