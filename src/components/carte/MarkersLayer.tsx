@@ -86,7 +86,8 @@ export function MarkersLayer({ centres, onCentreSelect }: MarkersLayerProps) {
 
   // Fonction pour créer l'icône du cluster
   const createClusterIcon = useCallback(
-    (cluster: L.MarkerCluster) => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (cluster: any) => {
       const markers = cluster.getAllChildMarkers();
       const count = markers.length;
 
