@@ -101,9 +101,7 @@ export function ChoroplethLayer({ centres, onDepartementClick }: ChoroplethLayer
     async function loadGeoJSON() {
       try {
         // GeoJSON des départements français (version simplifiée pour les performances)
-        const response = await fetch(
-          'https://raw.githubusercontent.com/gregoiredavid/france-geojson/master/departements-version-simplifiee.geojson'
-        );
+        const response = await fetch('/departements.geojson');
         const data: FeatureCollection = await response.json();
         setGeoData(data);
       } catch (error) {
