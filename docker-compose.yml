@@ -19,20 +19,10 @@ services:
     labels:
       - "traefik.enable=true"
 
-      # Router HTTP (redirige vers HTTPS)
-      - "traefik.http.routers.controle-technique-http.rule=Host(`controle-technique.matge.com`)"
-      - "traefik.http.routers.controle-technique-http.entrypoints=web"
-      - "traefik.http.routers.controle-technique-http.middlewares=controle-technique-https-redirect"
-
-      # Middleware de redirection HTTPS (défini inline)
-      - "traefik.http.middlewares.controle-technique-https-redirect.redirectscheme.scheme=https"
-      - "traefik.http.middlewares.controle-technique-https-redirect.redirectscheme.permanent=true"
-
-      # Router HTTPS
-      - "traefik.http.routers.controle-technique-https.rule=Host(`controle-technique.matge.com`)"
-      - "traefik.http.routers.controle-technique-https.entrypoints=websecure"
-      - "traefik.http.routers.controle-technique-https.tls=true"
-      - "traefik.http.routers.controle-technique-https.tls.certresolver=letsencrypt"
+      # Router HTTPS uniquement (redirection HTTP gérée globalement par Traefik)
+      - "traefik.http.routers.controle-technique.rule=Host(`controle-technique.matge.com`)"
+      - "traefik.http.routers.controle-technique.entrypoints=websecure"
+      - "traefik.http.routers.controle-technique.tls.certresolver=letsencrypt"
 
       # Service
       - "traefik.http.services.controle-technique.loadbalancer.server.port=80"
