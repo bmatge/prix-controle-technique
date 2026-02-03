@@ -55,8 +55,6 @@ export function BarChart({
 
   // Si showRank est true, afficher une version custom avec numéros
   if (showRank) {
-    const dsfrColor = `var(--${getDSFRPalette(color)})` || color;
-
     return (
       <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
         {displayData.map((item, index) => {
