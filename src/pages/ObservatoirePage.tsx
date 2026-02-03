@@ -158,7 +158,6 @@ export function ObservatoirePage() {
               }))}
               valueFormatter={formatPrix}
               color="#18753c"
-              showRank
             />
           </ChartCard>
         </div>
@@ -171,7 +170,6 @@ export function ObservatoirePage() {
               }))}
               valueFormatter={formatPrix}
               color="#ce0500"
-              showRank
             />
           </ChartCard>
         </div>
@@ -191,7 +189,6 @@ export function ObservatoirePage() {
             }))}
             valueFormatter={(v) => `${formatPrix(v)}`}
             color="#6a6af4"
-            showRank
           />
         </ChartCard>
       </div>

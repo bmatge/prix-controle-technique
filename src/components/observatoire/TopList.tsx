@@ -8,20 +8,8 @@ interface TopListProps {
 }
 
 export function TopList({ title, centres, variant = 'success' }: TopListProps) {
-  const colors = {
-    success: {
-      badge: '#18753c',
-      badgeBg: '#b8fec9',
-      accent: '#18753c',
-    },
-    error: {
-      badge: '#ce0500',
-      badgeBg: '#fec9c9',
-      accent: '#ce0500',
-    },
-  };
-
-  const c = colors[variant];
+  const badgeClass = variant === 'success' ? 'fr-badge--success' : 'fr-badge--error';
+  const accentColor = variant === 'success' ? '#18753c' : '#ce0500';
 
   return (
     <div
@@ -52,7 +40,7 @@ export function TopList({ title, centres, variant = 'success' }: TopListProps) {
                 width: '28px',
                 height: '28px',
                 borderRadius: '50%',
-                backgroundColor: index < 3 ? c.accent : 'var(--background-contrast-grey)',
+                backgroundColor: index < 3 ? accentColor : 'var(--background-contrast-grey)',
                 color: index < 3 ? '#fff' : 'var(--text-default-grey)',
                 display: 'flex',
                 alignItems: 'center',
@@ -88,17 +76,7 @@ export function TopList({ title, centres, variant = 'success' }: TopListProps) {
                 {centre.commune} ({centre.departement})
               </p>
             </div>
-            <span
-              style={{
-                padding: '6px 12px',
-                borderRadius: '20px',
-                backgroundColor: c.badgeBg,
-                color: c.badge,
-                fontWeight: 700,
-                fontSize: '0.9rem',
-                flexShrink: 0,
-              }}
-            >
+            <span className={`fr-badge ${badgeClass}`}>
               {formatPrix(centre.prixReference)}
             </span>
           </div>
